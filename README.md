@@ -1,103 +1,394 @@
 # Beelink Home Lab
 
-A documented home-lab environment built to practice infrastructure administration, virtualization, containerized services, storage management, network troubleshooting, and secure remote access.
+Enterprise-style virtualization and self-hosted infrastructure built to develop practical experience in systems administration, networking, Linux, virtualization, Docker, storage management, and infrastructure troubleshooting.
 
-> Public documentation only. Internal IP addresses, credentials, hostnames, share paths, and other sensitive configuration details have been sanitized.
+This environment serves as both a production platform for personal and small-business services and a continuously evolving lab for learning enterprise IT technologies.
 
-## Goals
+> **Note**
+>
+> Public documentation only. Internal IP addresses, credentials, hostnames, domains, and sensitive configuration details have been sanitized.
 
-- Build practical experience beyond certification labs
-- Host useful self-managed services for personal and small-business workflows
-- Practice Linux administration, Docker, networking, storage, troubleshooting, and documentation
-- Create a repeatable, maintainable environment rather than a one-off setup
+---
 
-## Architecture Overview
+# Overview
+
+## Objectives
+
+- Develop practical infrastructure experience beyond certification labs
+- Build and maintain a production-quality virtualization environment
+- Practice Linux administration, networking, Docker, storage management, and troubleshooting
+- Deploy useful services supporting personal workflows and Zephyr Visions business operations
+- Document engineering decisions, deployment procedures, and troubleshooting for future reference
+
+---
+
+# Architecture
+
+## Infrastructure Overview
 
 ```text
-Home Network
-    |
-Omada Network
-    |
-Proxmox VE Host
-    |
-Debian LXC Container
-    |
-Docker Services: Nextcloud, Jellyfin, Sonarr, Radarr, Portainer, Uptime Kuma
-    |
-External 20 TB Storage
+                    Internet
+                        │
+                 TP-Link ER605
+                        │
+               SG2210P PoE Switch
+                        │
+                  EAP653 Access Point
+                        │
+                  Beelink Mini PC
+                        │
+                   Proxmox VE Host
+                        │
+                 Debian Docker LXC
+                        │
+ ┌────────────┬────────────┬────────────┬────────────┐
+ │            │            │            │
+Nextcloud  Jellyfin   Portainer   Uptime Kuma
+ │
+ ├── Sonarr
+ ├── Radarr
+ └── Samba
+        │
+ External 20 TB Storage
 ```
 
-## Hardware and Platform
+---
 
-| Component | Role |
-|---|---|
-| Beelink mini PC | Physical home-lab host |
-| Proxmox VE | Virtualization platform |
+### Future Architecture Diagram
+
+> **Screenshot Placeholder**
+>
+> `screenshots/network-diagram.png`
+
+*A professionally designed network diagram illustrating the complete infrastructure.*
+
+---
+
+# Engineering Decisions
+
+| Decision | Reason |
+|-----------|--------|
+| Proxmox VE | Lightweight, enterprise-grade virtualization platform with excellent LXC support |
+| Debian LXC | Lower overhead than full virtual machines while maintaining Linux isolation |
+| Docker Compose | Repeatable, version-controlled service deployments |
+| External 20 TB Storage | Separates operating system storage from large media and business datasets |
+| Tailscale | Secure remote administration without exposing management interfaces to the Internet |
+| Omada SDN | Centralized management with future support for VLAN expansion and segmentation |
+
+---
+
+# Hardware
+
+| Component | Purpose |
+|------------|----------|
+| Beelink Mini PC | Primary virtualization host |
+| Proxmox VE | Hypervisor |
 | Debian LXC | Docker workload container |
-| External 20 TB drive | Shared storage, media, backups, and project files |
-| TP-Link Omada | Home network infrastructure |
+| External 20 TB HDD | Shared storage for media, backups, and projects |
+| TP-Link ER605 | Router |
+| TP-Link SG2210P | Managed PoE switch |
+| TP-Link EAP653 | Wireless Access Point |
+| Omada Controller | Centralized network management |
 
-## Services
+---
+
+# Virtualization Platform
+
+The Beelink server runs Proxmox VE as the primary hypervisor.
+
+Current responsibilities include:
+
+- Container management
+- Storage management
+- Resource allocation
+- LXC lifecycle management
+- Backup planning
+- Infrastructure maintenance
+
+<img width="2222" height="1038" alt="image" src="https://github.com/user-attachments/assets/d08f380f-4e82-45ed-8eba-ad841a0c8c24" />
+Proxmox VE dashboard showing the Beelink host providing virtualization, storage management, and resource monitoring for the home lab infrastructure.
+
+
+---
+
+# Container Platform
+
+All application services run inside a Debian LXC using Docker and Docker Compose.
+
+This provides:
+
+- Consistent deployments
+- Simple upgrades
+- Easy backup procedures
+- Service isolation
+- Version-controlled configurations
+
+<img width="2212" height="1042" alt="image" src="https://github.com/user-attachments/assets/8f93adec-fb7d-49f4-866c-c8d38e6ca797" />
+Debian LXC container hosting the Docker application stack, including resource utilization and performance monitoring for containerized services.
+
+---
+
+# Services
 
 | Service | Purpose |
-|---|---|
-| Proxmox VE | Virtualization host and LXC management |
-| Docker | Container runtime |
-| Nextcloud | File sharing and client-delivery workflow |
-| Samba | Windows-accessible file shares |
-| Jellyfin | Personal media and drone-footage playback |
-| Sonarr / Radarr | Media-library management |
-| Portainer | Docker container management |
-| Uptime Kuma | Service monitoring |
-| Tailscale | Encrypted remote access without router port forwarding |
+|-----------|----------|
+| Nextcloud | Secure file sharing and client portal |
+| Samba | Windows file shares |
+| Jellyfin | Personal media server |
+| Sonarr | Television library automation |
+| Radarr | Movie library automation |
+| Portainer | Docker management |
+| Uptime Kuma | Infrastructure monitoring |
+| Tailscale | Secure remote administration |
 
-## Storage Design
+---
 
-The external drive supports separate workflows for business files, drone projects, media, backups, and templates. It is mounted on the host and passed into the Docker LXC for services that need access to shared storage.
+# Storage Design
+
+The external 20 TB drive is organized to support multiple workflows while maintaining separation between application data and media storage.
+
+Current storage includes:
+
+- Business files
+- Drone footage
+- Client deliverables
+- Media libraries
+- Docker persistent volumes
+- Server backups
+- Templates
 
 Key design considerations:
 
-- Shared storage is accessible from Windows through Samba.
-- Nextcloud provides browser-based file access and controlled sharing.
-- Jellyfin reads from dedicated media folders.
-- Server configuration backups are stored separately from application data.
-- Existing drone footage is preserved while the newer folder structure is gradually adopted.
+- Windows access through Samba
+- Browser-based access through Nextcloud
+- Dedicated media paths for Jellyfin
+- Separate configuration backups
+- Consistent Docker bind mounts
 
-## Networking and Remote Access
+20 TB External Storage
 
-The lab uses an Omada-managed home network and Tailscale for encrypted remote administration.
+├── Backups
+│     ├── Proxmox
+│     └── Docker
+│
+├── Business
+│     ├── Clients
+│     ├── Deliveries
+│     └── Zephyr
+│
+├── Media
+│     ├── Movies
+│     ├── TV Shows
+│     └── Music
+│
+├── Drone Projects
+│     ├── Thermal
+│     ├── INspection
+│     └── Mapping
+│
+└── Docker Persistent Volumes
 
-- No router port forwarding is required for remote administration.
-- Tailscale access to the virtualization host was validated with connectivity testing.
-- A VPN/DNS conflict was identified and resolved during setup, reinforcing the importance of validating adapter priority, DNS behavior, and service-level connectivity.
+---
 
-## Troubleshooting Highlights
+# Networking
 
-A few real-world issues worked through during this build:
+The lab is integrated into a TP-Link Omada managed network.
 
-- Configuring Samba shares and mapping them as Windows drive letters
-- Passing external storage into an unprivileged LXC container
-- Handling ownership and permission limitations with exFAT-backed storage
-- Diagnosing Tailscale authentication failures caused by a competing VPN/DNS adapter
-- Validating service reachability with command-line networking tools
-- Organizing Docker bind mounts so media services use consistent paths
+Current networking technologies include:
 
-## Skills Demonstrated
+- TP-Link Omada SDN
+- DHCP
+- DNS
+- Static addressing
+- Docker bridge networking
+- Tailscale VPN
+- Windows SMB networking
 
-- Linux administration
-- Proxmox VE and LXC containers
-- Docker Compose and container operations
-- Samba file sharing
-- Storage mounts and permissions
-- Basic network troubleshooting
-- DNS troubleshooting
-- VPN and secure remote-access configuration
-- Service documentation and operational runbooks
-- Python Scripting
+Remote administration is performed entirely through Tailscale.
 
-## Planned Improvements
+No management services are exposed through router port forwarding.
 
-- [ ] Add a sanitized network diagram
-- [ ] Document monitoring checks and alerting
-- [ ] Create a backup and restore test plan
-- [ ] Add a client-facing delivery portal for ZephyrVisions.com
+### Omada Dashboard
+
+<img width="3160" height="1175" alt="image" src="https://github.com/user-attachments/assets/27682190-c816-465b-a3f1-3dbde385693d" />
+
+
+---
+
+### Omada Topology
+
+<img width="1605" height="580" alt="image" src="https://github.com/user-attachments/assets/2c37256a-9b08-49e6-8cb5-52e0ef72fe52" />
+
+
+---
+
+### Omada Devices
+
+<img width="3192" height="675" alt="image" src="https://github.com/user-attachments/assets/bd62df8f-8692-4e62-a5e8-13706818146a" />
+
+
+---
+
+# Monitoring
+
+Infrastructure availability is monitored using Uptime Kuma.
+
+Monitoring currently includes:
+
+- Docker services
+- Web applications
+- Internal services
+- Remote availability
+
+Future improvements include:
+
+- Email alerts
+- Service dashboards
+- Historical uptime reporting
+
+<img width="2256" height="805" alt="image" src="https://github.com/user-attachments/assets/efbc232f-6134-4e0b-9d4b-7c331c3d3876" />
+
+
+---
+
+# Troubleshooting Highlights
+
+This lab intentionally serves as a troubleshooting environment for developing practical infrastructure experience.
+
+## Samba Permissions
+
+### Problem
+
+Windows clients could not consistently access shared folders.
+
+### Resolution
+
+Configured Samba permissions, validated Linux ownership, and verified share mappings.
+
+---
+
+## LXC Storage Passthrough
+
+### Problem
+
+External storage required access from Docker containers.
+
+### Resolution
+
+Configured Proxmox bind mounts and passed storage into the Debian LXC.
+
+---
+
+## exFAT Ownership
+
+### Problem
+
+Linux ownership and permissions behaved differently than expected on exFAT storage.
+
+### Resolution
+
+Adjusted mount strategy and Docker permissions while documenting filesystem limitations.
+
+---
+
+## VPN / DNS Conflict
+
+### Problem
+
+Remote administration intermittently failed despite successful VPN authentication.
+
+### Resolution
+
+Identified conflicting VPN software affecting DNS resolution and adapter priority.
+
+Validated connectivity using:
+
+- ping
+- nslookup
+- service testing
+
+---
+
+## Docker Bind Mounts
+
+### Problem
+
+Applications required consistent shared media paths.
+
+### Resolution
+
+Standardized Docker Compose bind mounts across all containers.
+
+---
+
+# Skills Demonstrated
+
+## Infrastructure
+
+- Proxmox VE
+- Linux Administration
+- Debian
+- LXC Containers
+- Docker
+- Docker Compose
+
+## Networking
+
+- TP-Link Omada
+- DNS
+- DHCP
+- SMB Networking
+- VPN
+- Tailscale
+- Network Troubleshooting
+
+## Storage
+
+- Bind Mounts
+- Linux Permissions
+- Shared Storage
+- Backup Planning
+
+## Operations
+
+- Infrastructure Documentation
+- Service Monitoring
+- Troubleshooting
+- Root Cause Analysis
+
+---
+
+# Repository Structure
+
+```
+beelink-homelab/
+
+├── README.md
+├── screenshots/
+├── diagrams/
+├── docker/
+├── docs/
+│   ├── networking.md
+│   ├── storage.md
+│   ├── troubleshooting.md
+│   └── backups.md
+└── compose/
+```
+
+---
+
+# Planned Improvements
+
+- [ ] Create professional network diagram
+- [ ] Document Docker Compose deployments
+- [ ] Document backup and recovery procedures
+- [ ] Add Grafana dashboards
+- [ ] Configure automated Proxmox backups
+- [ ] Expand monitoring and alerting
+- [ ] Implement HTTPS reverse proxy
+- [ ] Document disaster recovery process
+- [ ] Add Zephyr Visions client delivery integration
+
+---
+
+This repository will continue to evolve as additional services, networking features, monitoring, and automation are implemented.
