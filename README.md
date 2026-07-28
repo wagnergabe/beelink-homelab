@@ -56,11 +56,55 @@ Nextcloud  Jellyfin   Portainer   Uptime Kuma
 
 ### Future Architecture Diagram
 
-> **Screenshot Placeholder**
->
-> `screenshots/network-diagram.png`
+## Infrastructure Overview
 
-*A professionally designed network diagram illustrating the complete infrastructure.*
+The following screenshots highlight the core components of the lab, including virtualization, container management, network infrastructure, and system monitoring.
+
+---
+
+## Virtualization Platform
+
+![Proxmox Host Dashboard](screenshots/proxmox-host-dashboard.png)
+
+**Figure 1.** Proxmox VE host dashboard displaying virtualization resources, storage allocation, and infrastructure health.
+
+---
+
+## Container Platform
+
+![Portainer Dashboard](screenshots/Portainer-dashboard.png)
+
+**Figure 2.** Docker Compose stacks managed through Portainer CE for centralized container administration.
+
+---
+
+## Network Infrastructure
+
+### Physical Network Topology
+
+![Omada Topology](screenshots/omada-topoloy.png)
+
+**Figure 3.** Physical network topology managed through the TP-Link Omada SDN controller, illustrating the WAN gateway, managed switch, wireless access point, controller, and connected client devices.
+
+### Managed Network Devices
+
+![Omada Device List](screenshots/omada-devices.png)
+
+**Figure 4.** TP-Link Omada SDN managed devices showing the gateway, managed switch, and wireless access point with centralized health monitoring, firmware versions, and uptime.
+
+### Network Health Overview
+
+![Omada Overview](screenshots/omada-overview.png)
+
+**Figure 5.** Omada dashboard providing network health, traffic statistics, connected clients, and wireless analytics.
+
+---
+
+## Infrastructure Monitoring
+
+![Uptime Kuma Dashboard](screenshots/uptime-kuma.png)
+
+**Figure 6.** Uptime Kuma monitoring infrastructure availability, network devices, and self-hosted services including Proxmox, Portainer, Omada Controller, Nextcloud, Jellyfin, Internet connectivity, and the network gateway.
 
 ---
 
