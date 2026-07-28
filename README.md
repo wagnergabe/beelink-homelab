@@ -78,7 +78,7 @@ The following screenshots highlight the core components of the lab, including vi
 
 ### Physical Network Topology
 
-![Omada Topology](screenshots/omada-topoloy.png)
+![Omada Topology](screenshots/omada-topology.png)
 
 **Figure 3.** Physical network topology managed through the TP-Link Omada SDN controller, illustrating the WAN gateway, managed switch, wireless access point, controller, and connected client devices.
 
