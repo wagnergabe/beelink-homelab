@@ -44,11 +44,7 @@ This environment serves as both a production platform for personal and small-bus
  ┌────────────┬────────────┬────────────┬────────────┐
  │            │            │            │
 Nextcloud  Jellyfin   Portainer   Uptime Kuma
- │
- ├── Sonarr
- ├── Radarr
- └── Samba
-        │
+│         
  External 20 TB Storage
 ```
 
