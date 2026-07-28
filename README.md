@@ -207,27 +207,6 @@ Key design considerations:
 
 20 TB External Storage
 
-├── Backups
-│     ├── Proxmox
-│     └── Docker
-│
-├── Business
-│     ├── Clients
-│     ├── Deliveries
-│     └── Zephyr
-│
-├── Media
-│     ├── Movies
-│     ├── TV Shows
-│     └── Music
-│
-├── Drone Projects
-│     ├── Thermal
-│     ├── INspection
-│     └── Mapping
-│
-└── Docker Persistent Volumes
-
 ---
 
 # Networking
